@@ -1,2 +1,2 @@
 # Java
-Java
+Collection of java scripts.
