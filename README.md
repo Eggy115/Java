@@ -8,19 +8,19 @@ To use any of the scripts or snippets in this repository, simply copy and paste 
   
 If you want to execute the code as is, first run
 
-```java
+```batch
 javac name.java
 ```
 
 and then
 
-```java
+```batch
 java name
 ```
 
 *OR*
 
-```java
+```batch
 java name.java
 ```
 
