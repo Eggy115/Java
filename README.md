@@ -5,6 +5,24 @@ This repository contains a collection of Java scripts and snippets that can be u
 ## Usage
 
 To use any of the scripts or snippets in this repository, simply copy and paste the code into your own Java project or file. Each script or snippet is labeled with a description and a brief explanation of what it does.
+  
+If you want to execute the code as is, first run
+
+```py
+javac name.java
+```
+
+and then
+
+```py
+java name
+```
+
+*OR*
+
+```py
+java name.class
+```
 
 ## Contributing
 
