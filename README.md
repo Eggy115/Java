@@ -8,19 +8,19 @@ To use any of the scripts or snippets in this repository, simply copy and paste 
   
 If you want to execute the code as is, first run
 
-```py
+```java
 javac name.java
 ```
 
 and then
 
-```py
+```java
 java name
 ```
 
 *OR*
 
-```py
+```java
 java name.class
 ```
 
