@@ -15,28 +15,29 @@
  */
 package org.redisson.example.objects;
 
-import java.util.concurrent.TimeUnit;
-
 import org.redisson.Redisson;
-import org.redisson.api.RBucket;
+import org.redisson.api.RAtomicLong;
 import org.redisson.api.RedissonClient;
 
-public class BucketExamples {
+public class AtomicLongExamples {
 
     public static void main(String[] args) {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
+
+        RAtomicLong atomicLong = redisson.getAtomicLong("myLong");
+        atomicLong.getAndDecrement();
+        atomicLong.getAndIncrement();
         
-        RBucket<String> bucket = redisson.getBucket("test");
-        bucket.set("123");
-        boolean isUpdated = bucket.compareAndSet("123", "4934");
-        String prevObject = bucket.getAndSet("321");
-        boolean isSet = bucket.trySet("901");
-        long objectSize = bucket.size();
+        atomicLong.addAndGet(10L);
+        atomicLong.compareAndSet(29, 412);
         
-        // set with expiration
-        bucket.set("value", 10, TimeUnit.SECONDS);
-        boolean isNewSet = bucket.trySet("nextValue", 10, TimeUnit.SECONDS);
+        atomicLong.decrementAndGet();
+        atomicLong.incrementAndGet();
+        
+        atomicLong.getAndAdd(302);
+        atomicLong.getAndDecrement();
+        atomicLong.getAndIncrement();
         
         redisson.shutdown();
     }

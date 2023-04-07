@@ -15,28 +15,41 @@
  */
 package org.redisson.example.objects;
 
-import java.util.concurrent.TimeUnit;
-
 import org.redisson.Redisson;
-import org.redisson.api.RBucket;
+import org.redisson.api.RBitSet;
 import org.redisson.api.RedissonClient;
 
-public class BucketExamples {
+public class BitSetExamples {
 
     public static void main(String[] args) {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
-        
-        RBucket<String> bucket = redisson.getBucket("test");
-        bucket.set("123");
-        boolean isUpdated = bucket.compareAndSet("123", "4934");
-        String prevObject = bucket.getAndSet("321");
-        boolean isSet = bucket.trySet("901");
-        long objectSize = bucket.size();
-        
-        // set with expiration
-        bucket.set("value", 10, TimeUnit.SECONDS);
-        boolean isNewSet = bucket.trySet("nextValue", 10, TimeUnit.SECONDS);
+
+        RBitSet bs = redisson.getBitSet("testbitset");
+        bs.set(0, 5);
+        bs.clear(0, 1);
+        bs.length();
+
+        bs.clear();
+        bs.set(28);
+        bs.get(28);
+
+        bs.not();
+
+        bs.cardinality();
+
+        bs.set(3, true);
+        bs.set(41, false);
+
+        RBitSet bs1 = redisson.getBitSet("testbitset1");
+        bs1.set(3, 5);
+
+        RBitSet bs2 = redisson.getBitSet("testbitset2");
+        bs2.set(4);
+        bs2.set(10);
+        bs1.and(bs2.getName());
+        bs1.or(bs2.getName());
+        bs1.xor(bs2.getName());
         
         redisson.shutdown();
     }

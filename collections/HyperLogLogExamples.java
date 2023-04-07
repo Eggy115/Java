@@ -15,30 +15,39 @@
  */
 package org.redisson.example.objects;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
 
 import org.redisson.Redisson;
-import org.redisson.api.RBucket;
+import org.redisson.api.RHyperLogLog;
 import org.redisson.api.RedissonClient;
 
-public class BucketExamples {
+public class HyperLogLogExamples {
 
     public static void main(String[] args) {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
+
+        RHyperLogLog<String> hyperLogLog = redisson.getHyperLogLog("hyperLogLog");
+        hyperLogLog.add("1");
+        hyperLogLog.add("2");
+        hyperLogLog.add("3");
+        hyperLogLog.addAll(Arrays.asList("10", "20", "30"));
         
-        RBucket<String> bucket = redisson.getBucket("test");
-        bucket.set("123");
-        boolean isUpdated = bucket.compareAndSet("123", "4934");
-        String prevObject = bucket.getAndSet("321");
-        boolean isSet = bucket.trySet("901");
-        long objectSize = bucket.size();
+        RHyperLogLog<String> hyperLogLog1 = redisson.getHyperLogLog("hyperLogLog1");
+        hyperLogLog1.add("4");
+        hyperLogLog1.add("5");
+        hyperLogLog1.add("6");
         
-        // set with expiration
-        bucket.set("value", 10, TimeUnit.SECONDS);
-        boolean isNewSet = bucket.trySet("nextValue", 10, TimeUnit.SECONDS);
+        RHyperLogLog<String> hyperLogLog2 = redisson.getHyperLogLog("hyperLogLog2");
+        hyperLogLog1.add("4");
+        hyperLogLog1.add("5");
+        hyperLogLog1.add("6");
         
+        hyperLogLog2.mergeWith(hyperLogLog1.getName());
+        hyperLogLog2.countWith(hyperLogLog1.getName());
+
         redisson.shutdown();
     }
+
     
 }

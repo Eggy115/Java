@@ -15,30 +15,25 @@
  */
 package org.redisson.example.objects;
 
-import java.util.concurrent.TimeUnit;
-
 import org.redisson.Redisson;
 import org.redisson.api.RBucket;
+import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 
-public class BucketExamples {
+public class ReferenceExamples {
 
     public static void main(String[] args) {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
+
+        RMap<String, RBucket<String>> data = redisson.getMap("myMap");
         
-        RBucket<String> bucket = redisson.getBucket("test");
-        bucket.set("123");
-        boolean isUpdated = bucket.compareAndSet("123", "4934");
-        String prevObject = bucket.getAndSet("321");
-        boolean isSet = bucket.trySet("901");
-        long objectSize = bucket.size();
-        
-        // set with expiration
-        bucket.set("value", 10, TimeUnit.SECONDS);
-        boolean isNewSet = bucket.trySet("nextValue", 10, TimeUnit.SECONDS);
-        
-        redisson.shutdown();
+        RBucket<String> bs = redisson.getBucket("myObject");
+        bs.set("5");
+        bs.set("7");
+        data.put("bucket", bs);
+
+        RBucket<String> bucket = data.get("bucket");
     }
     
 }

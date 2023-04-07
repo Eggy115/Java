@@ -15,28 +15,31 @@
  */
 package org.redisson.example.objects;
 
-import java.util.concurrent.TimeUnit;
-
 import org.redisson.Redisson;
-import org.redisson.api.RBucket;
+import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
 
-public class BucketExamples {
+public class BloomFilterExamples {
 
     public static void main(String[] args) {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
+
+        RBloomFilter<String> bloomFilter = redisson.getBloomFilter("bloomFilter");
+        bloomFilter.tryInit(100_000_000, 0.03);
         
-        RBucket<String> bucket = redisson.getBucket("test");
-        bucket.set("123");
-        boolean isUpdated = bucket.compareAndSet("123", "4934");
-        String prevObject = bucket.getAndSet("321");
-        boolean isSet = bucket.trySet("901");
-        long objectSize = bucket.size();
+        bloomFilter.add("a");
+        bloomFilter.add("b");
+        bloomFilter.add("c");
+        bloomFilter.add("d");
         
-        // set with expiration
-        bucket.set("value", 10, TimeUnit.SECONDS);
-        boolean isNewSet = bucket.trySet("nextValue", 10, TimeUnit.SECONDS);
+        bloomFilter.getExpectedInsertions();
+        bloomFilter.getFalseProbability();
+        bloomFilter.getHashIterations();
+        
+        bloomFilter.contains("a");
+        
+        bloomFilter.count();
         
         redisson.shutdown();
     }

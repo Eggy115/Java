@@ -15,28 +15,39 @@
  */
 package org.redisson.example.objects;
 
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.redisson.Redisson;
-import org.redisson.api.RBucket;
+import org.redisson.api.RBinaryStream;
 import org.redisson.api.RedissonClient;
 
-public class BucketExamples {
+public class BinaryStreamExamples {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
+
+        RBinaryStream stream = redisson.getBinaryStream("myStream");
         
-        RBucket<String> bucket = redisson.getBucket("test");
-        bucket.set("123");
-        boolean isUpdated = bucket.compareAndSet("123", "4934");
-        String prevObject = bucket.getAndSet("321");
-        boolean isSet = bucket.trySet("901");
-        long objectSize = bucket.size();
+        byte[] values = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+        stream.trySet(values);
+        stream.set(values);
         
-        // set with expiration
-        bucket.set("value", 10, TimeUnit.SECONDS);
-        boolean isNewSet = bucket.trySet("nextValue", 10, TimeUnit.SECONDS);
+        InputStream is = stream.getInputStream();
+        StringBuilder sb = new StringBuilder();
+        int ch;
+        while((ch = is.read()) != -1) {
+            sb.append((char)ch);
+        }
+        String str = sb.toString();
+        
+        OutputStream os = stream.getOutputStream();
+        for (int i = 0; i < values.length; i++) {
+            byte c = values[i];
+            os.write(c);
+        }
         
         redisson.shutdown();
     }

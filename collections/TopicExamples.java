@@ -15,28 +15,31 @@
  */
 package org.redisson.example.objects;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CountDownLatch;
 
 import org.redisson.Redisson;
-import org.redisson.api.RBucket;
+import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
+import org.redisson.api.listener.MessageListener;
 
-public class BucketExamples {
+public class TopicExamples {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
+
+        CountDownLatch latch = new CountDownLatch(1);
         
-        RBucket<String> bucket = redisson.getBucket("test");
-        bucket.set("123");
-        boolean isUpdated = bucket.compareAndSet("123", "4934");
-        String prevObject = bucket.getAndSet("321");
-        boolean isSet = bucket.trySet("901");
-        long objectSize = bucket.size();
+        RTopic topic = redisson.getTopic("topic2");
+        topic.addListener(String.class, new MessageListener<String>() {
+            @Override
+            public void onMessage(CharSequence channel, String msg) {
+                latch.countDown();
+            }
+        });
         
-        // set with expiration
-        bucket.set("value", 10, TimeUnit.SECONDS);
-        boolean isNewSet = bucket.trySet("nextValue", 10, TimeUnit.SECONDS);
+        topic.publish("msg");
+        latch.await();
         
         redisson.shutdown();
     }

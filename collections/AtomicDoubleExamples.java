@@ -15,28 +15,29 @@
  */
 package org.redisson.example.objects;
 
-import java.util.concurrent.TimeUnit;
-
 import org.redisson.Redisson;
-import org.redisson.api.RBucket;
+import org.redisson.api.RAtomicDouble;
 import org.redisson.api.RedissonClient;
 
-public class BucketExamples {
+public class AtomicDoubleExamples {
 
     public static void main(String[] args) {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
+
+        RAtomicDouble atomicDouble = redisson.getAtomicDouble("myDouble");
+        atomicDouble.getAndDecrement();
+        atomicDouble.getAndIncrement();
         
-        RBucket<String> bucket = redisson.getBucket("test");
-        bucket.set("123");
-        boolean isUpdated = bucket.compareAndSet("123", "4934");
-        String prevObject = bucket.getAndSet("321");
-        boolean isSet = bucket.trySet("901");
-        long objectSize = bucket.size();
+        atomicDouble.addAndGet(10.323);
+        atomicDouble.compareAndSet(29.4, 412.91);
         
-        // set with expiration
-        bucket.set("value", 10, TimeUnit.SECONDS);
-        boolean isNewSet = bucket.trySet("nextValue", 10, TimeUnit.SECONDS);
+        atomicDouble.decrementAndGet();
+        atomicDouble.incrementAndGet();
+        
+        atomicDouble.getAndAdd(302.00);
+        atomicDouble.getAndDecrement();
+        atomicDouble.getAndIncrement();
         
         redisson.shutdown();
     }

@@ -15,28 +15,25 @@
  */
 package org.redisson.example.objects;
 
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
 
 import org.redisson.Redisson;
-import org.redisson.api.RBucket;
+import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 
-public class BucketExamples {
+public class SSLExamples {
 
-    public static void main(String[] args) {
-        // connects to 127.0.0.1:6379 by default
-        RedissonClient redisson = Redisson.create();
-        
-        RBucket<String> bucket = redisson.getBucket("test");
-        bucket.set("123");
-        boolean isUpdated = bucket.compareAndSet("123", "4934");
-        String prevObject = bucket.getAndSet("321");
-        boolean isSet = bucket.trySet("901");
-        long objectSize = bucket.size();
-        
-        // set with expiration
-        bucket.set("value", 10, TimeUnit.SECONDS);
-        boolean isNewSet = bucket.trySet("nextValue", 10, TimeUnit.SECONDS);
+    public static void main(String[] args) throws IOException {
+        Config config = new Config();
+
+        // rediss - defines to use SSL for Redis connection
+        config.useSingleServer().setAddress("rediss://127.0.0.1:6379");
+        RedissonClient redisson = Redisson.create(config);
+
+        RMap<String, String> map = redisson.getMap("test");
+        map.put("mykey", "myvalue");
+        String value =  map.get("mykey");
         
         redisson.shutdown();
     }
